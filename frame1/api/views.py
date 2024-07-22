@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 
 from .models import Student
 from .serializers import StudentSerializer
+
+
 
 
 
@@ -26,8 +29,8 @@ def Student_api(request, pk = None):
             serializer.save()
             return Response({
                 "msg" : "Data Created"
-            })
-        return Response(serializer.errors)
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     if request.method == "PUT":
         id = pk
@@ -36,9 +39,9 @@ def Student_api(request, pk = None):
         if serializer.is_valid():
             serializer.save()
             return Response({'msg' : "Data fully update Upated"})
-        return Response(serializer.errors)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-    if request.method == "PUT":
+    if request.method == "PATCH":
         id = pk
         stu = Student.objects.get(pk = id)
         serializer = StudentSerializer(stu, partial=True, data=request.data)
